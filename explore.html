@@ -86,14 +86,40 @@ async function loadNotes() {
 }
 
 // Render 5 random public notes
+// function renderSpores() {
+//     const container = document.getElementById("sporeContainer");
+//     container.innerHTML = "";
+
+//     if (publicNotes.length === 0) return;
+
+//     // pick 5 random notes
+//     const shuffled = publicNotes.sort(() => 0.5 - Math.random());
+//     const selected = shuffled.slice(0, Math.min(5, shuffled.length));
+
+//     for (const note of selected) {
+//         const spore = document.createElement("div");
+//         spore.className = "spore";
+//         spore.textContent = note;
+//         container.appendChild(spore);
+//     }
+// }
+
+function shuffle(array) {
+    const a = array.slice(); // copy array
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
 function renderSpores() {
     const container = document.getElementById("sporeContainer");
     container.innerHTML = "";
 
     if (publicNotes.length === 0) return;
 
-    // pick 5 random notes
-    const shuffled = publicNotes.sort(() => 0.5 - Math.random());
+    const shuffled = shuffle(publicNotes);
     const selected = shuffled.slice(0, Math.min(5, shuffled.length));
 
     for (const note of selected) {
@@ -103,6 +129,7 @@ function renderSpores() {
         container.appendChild(spore);
     }
 }
+
 
 // Initial load
 loadNotes().then(renderSpores);
