@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Share</title>
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    position: relative;
+    background-color: #97f7df;
+
+}
+.spore {
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    border: 2px solid #888;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    gap: 16px;
+    box-sizing: border-box;
+}
+textarea {
+    width: 85%;
+    height: 60%;
+    resize: none;
+    padding: 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+select {
+    padding: 6px;
+    font-size: 14px;
+}
+button {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.home-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    border-radius: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="spore">
+    <form action="https://docs.google.com/forms/d/e/1FAIpQLSct-OEot2USCpw2lrzxokDsbQlW3LhXpfHMH8dCtNfkr_Balw/formResponse" 
+    method="POST" style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;">
+        
+        <!-- Note -->
+        <textarea name="entry.1048155509" placeholder="Write your note..."></textarea>
+        
+        <!-- Public / Private -->
+        <select name="entry.596502037">
+            <option value="Public" selected>Public</option>
+            <option value="Private">Private</option>
+        </select>
+        
+        <!-- Submit -->
+        <button type="submit">Share</button>
+    </form>
+</div>
+
+<!-- Back to Homepage -->
+<a href="index.html"><button class="home-button">Back to Home</button></a>
+
+</body>
+</html>

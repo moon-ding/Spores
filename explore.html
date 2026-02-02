@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Explore</title>
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: sans-serif;
+    background-color: #97f7df;
+    color:black;
+}
+.spore-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 40px;
+}
+.spore {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 2px solid #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    overflow: auto;
+    text-align: center;
+    word-break: break-word;
+    background-color: white;
+}
+button {
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 12px;
+    background: #eee;
+    color: #111;
+    font-size: 16px;
+}
+/* Back to home button */
+.home-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="spore-container" id="sporeContainer">
+    <!-- Spores will appear here -->
+</div>
+
+<button onclick="renderSpores()">Refresh</button>
+
+<a href="index.html"><button class="home-button">Back to Home</button></a>
+
+<script>
+//all google sheets related stuff and the for loop in renderSpores() is written aided by ChatGPT
+// CSV link (replace with your sheet's CSV link)
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS37DTdx0KPmZux76Okyng73w8bmBVQ87TEkO5Bw7ntfZleFjj11FZYHmlmK474Grb2pWYwt9tfMDhV/pub?output=csv";
+
+let publicNotes = [];
+
+// Load CSV and filter public notes
+async function loadNotes() {
+    const res = await fetch(CSV_URL);
+    const text = await res.text();
+
+    const rows = text.split("\n").slice(1); // skip header
+    publicNotes = rows
+        .map(r => r.split(","))                // split into columns
+        .filter(cols => cols[2]?.trim() === "Public") // visibility column
+        .map(cols => cols[1])                  // note column
+        .filter(Boolean);                      // remove empty
+}
+
+// Render 5 random public notes
+function renderSpores() {
+    const container = document.getElementById("sporeContainer");
+    container.innerHTML = "";
+
+    if (publicNotes.length === 0) return;
+
+    // pick 5 random notes
+    const shuffled = publicNotes.sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, Math.min(5, shuffled.length));
+
+    for (const note of selected) {
+        const spore = document.createElement("div");
+        spore.className = "spore";
+        spore.textContent = note;
+        container.appendChild(spore);
+    }
+}
+
+// Initial load
+loadNotes().then(renderSpores);
+</script>
+
+</body>
+</html>
