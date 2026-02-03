@@ -49,18 +49,25 @@ button {
 
 /* Spore styling */
 .spore {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: white;
-    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 12px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
     text-align: center;
     word-break: break-word;
+    overflow: auto;
+    pointer-events: none;
+    min-width: 80px;   /* minimum size */
+    min-height: 80px;
+    max-width: 220px;  /* maximum size */
+    max-height: 220px;
+    font-size: 16px;
 }
+
+
 </style>
 </head>
 <body>
@@ -111,15 +118,17 @@ async function loadNotes() {
         .filter(Boolean);
 }
 
-function isOverlapping(newSpore, placedSpores, sporeSize = 180) {
+function isOverlapping(newSpore, placedSpores) {
     for (let sp of placedSpores) {
         const dx = newSpore.x - sp.x;
         const dy = newSpore.y - sp.y;
         const distance = Math.sqrt(dx*dx + dy*dy);
-        if (distance < sporeSize) return true; // too close → overlap
+        const minDistance = (newSpore.size + sp.size) / 2;
+        if (distance < minDistance) return true;
     }
     return false;
 }
+
 
 function renderSpores() {
     const notesArea = document.getElementById("notes-area");
@@ -133,27 +142,35 @@ function renderSpores() {
     const placedSpores = [];
 
     selected.forEach(note => {
-        const spore = document.createElement("div");
-        spore.className = "spore";
-        spore.textContent = note;
+    const spore = document.createElement("div");
+    spore.className = "spore";
+    spore.textContent = note;
 
-        const maxX = notesArea.clientWidth - 180;
-        const maxY = notesArea.clientHeight - 180;
+    // Approximate width by text length
+    const baseSize = 80;            // min size
+    const extraSize = Math.min(note.length * 6, 140); // scale with text length, capped
+    const sporeSize = baseSize + extraSize;
 
-        let x, y, attempts = 0;
-        do {
-            x = Math.random() * maxX;
-            y = Math.random() * maxY;
-            attempts++;
-            if (attempts > 100) break; // fail-safe to avoid infinite loop
-        } while (isOverlapping({x, y}, placedSpores));
+    spore.style.width = spore.style.height = sporeSize + "px";
 
-        spore.style.left = x + "px";
-        spore.style.top  = y + "px";
+    const maxX = notesArea.clientWidth - sporeSize;
+    const maxY = notesArea.clientHeight - sporeSize;
 
-        notesArea.appendChild(spore);
-        placedSpores.push({x, y});
-    });
+    let x, y, attempts = 0;
+    do {
+        x = Math.random() * maxX;
+        y = Math.random() * maxY;
+        attempts++;
+        if (attempts > 100) break; // fail-safe
+    } while (isOverlapping({x, y, size: sporeSize}, placedSpores));
+
+    spore.style.left = x + "px";
+    spore.style.top  = y + "px";
+
+    notesArea.appendChild(spore);
+    placedSpores.push({x, y, size: sporeSize});
+});
+
 }
 
 // Initial load
