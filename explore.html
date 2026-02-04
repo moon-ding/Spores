@@ -4,11 +4,17 @@
 <meta charset="UTF-8">
 <title>Explore</title>
 <style>
+@font-face{
+    font-family: QueshaGndR;
+    src:url(fonts/Quesha-gndR.ttf);
+}
+
 html, body {
     height: 100%;
     margin: 0;
     font-family: sans-serif;
     background-color: #97f7df;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 /* Main flex container */
@@ -24,27 +30,45 @@ html, body {
     z-index: 1;
 }
 
-#refresh-area {
-    display: flex;
-    justify-content: center;
-    padding: 16px;
-    position: relative;
-    z-index: 10;
-}
-
-#home-area {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 24px;
-}
-
 /* Buttons */
-button {
-    padding: 12px 24px;
+button{
     border-radius: 12px;
+    border: none;
+    padding: 12px 32px;
+    background-color: #22b393;
     cursor: pointer;
-    font-size: 16px;
-    pointer-events: auto;
+    transition: all 0.1s ease-in-out;
+    font-family: QueshaGndR;
+    font-size: large;
+}
+
+button:hover{
+    background-color: #97f7df;
+    letter-spacing: 0.1em;
+}
+
+/* has() state helped by ChatGPT */
+body:has(button:hover){
+    background-color: #22b393;
+    transition: all 0.25s ease-in-out;
+}
+
+#refresh-button{
+    position: fixed;
+    bottom: 24px;
+    left:50%;
+    z-index: 20;
+    transform: translateX(-50%);
+    font-size: xx-large;
+    padding: 18px 48px;
+    border-radius: 18px;
+}
+
+#home-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 20;
 }
 
 /* Spore styling */
@@ -59,7 +83,6 @@ button {
     text-align: center;
     word-break: break-word;
     overflow: auto;
-    pointer-events: none;
     min-width: 80px;   /* minimum size */
     min-height: 80px;
     max-width: 220px;  /* maximum size */
@@ -67,34 +90,55 @@ button {
     font-size: 16px;
 }
 
+.spore:hover{
+    border:2px ridge 	#45797a;
+    transition: border 0.1s ease-in-out;
+}
+
+.spore.liked{
+    animation: spore-flash 0.5s ease;
+}
+
+@keyframes spore-flash {
+    0%{
+        background-color: white;
+        transform: scale(1);
+    }
+    50%{
+        background-color: #45797a;
+        transform: scale(1.15);
+    }
+    100%{
+        background-color: white;
+        transform: scale(1);
+    }
+}
 
 </style>
 </head>
 <body>
 
 <div id="app">
-
-    <!-- FLEXBOX 1: Notes -->
     <div id="notes-area"></div>
 
-    <!-- FLEXBOX 2: Refresh -->
-    <div id="refresh-area">
-        <button id="refreshBtn" onclick="renderSpores()">Fetch Spores</button>
-    </div>
-
-    <!-- FLEXBOX 3: Home -->
-    <div id="home-area">
-        <a href="index.html"><button id="homeBtn">Back to Home</button></a>
-    </div>
+    <div class="button-row">
+        <button id="refresh-button" onclick="renderSpores()">Fetch Spores</button></div>
+        <a href="index.html"><button id="home-button">Back to Home</button></a></div>
+    </div> 
 
 </div>
 
 <script>
-//non-overlapping randomization and linking to google sheets aided by ChatGPT
+/*
+ChatGPT aided parts:
+linking google sheets user responses
+spore spawning randomization mechanism
+debugging
+*/
 
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS37DTdx0KPmZux76Okyng73w8bmBVQ87TEkO5Bw7ntfZleFjj11FZYHmlmK474Grb2pWYwt9tfMDhV/pub?output=csv";
 
-// ENTRY IDs
+// ENTRY ID
 const NOTE_ENTRY_ID = "Your note";
 
 let notes = [];
@@ -166,21 +210,25 @@ function renderSpores() {
 
     spore.style.left = x + "px";
     spore.style.top  = y + "px";
+    
+    spore.addEventListener("click",function(){
+        spore.classList.add("liked");
+    });
 
     notesArea.appendChild(spore);
     placedSpores.push({x, y, size: sporeSize});
 });
-
 }
 
 // Initial load
 loadNotes().then(renderSpores);
 
 // Refresh button
-document.getElementById("refreshBtn").addEventListener("click", renderSpores);
+document.getElementById("refresh-button").addEventListener("click", renderSpores);
 
 // Optional: re-randomize on resize
 window.addEventListener("resize", renderSpores);
+
 </script>
 
 </body>

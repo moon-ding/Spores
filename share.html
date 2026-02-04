@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <title>Share</title>
 <style>
+@font-face{
+    font-family: QueshaGndR;
+    src:url(fonts/Quesha-gndR.ttf);
+}
+
 body {
     margin: 0;
     min-height: 100vh;
@@ -13,8 +18,8 @@ body {
     font-family: sans-serif;
     position: relative;
     background-color: #97f7df;
-
 }
+
 .spore {
     width: 500px;
     height: 500px;
@@ -28,6 +33,7 @@ body {
     gap: 16px;
     box-sizing: border-box;
 }
+
 textarea {
     width: 85%;
     height: 60%;
@@ -35,22 +41,44 @@ textarea {
     padding: 12px;
     font-size: 14px;
     box-sizing: border-box;
+    font-family:'Times New Roman', Times, serif;
 }
+
 select {
     padding: 6px;
     font-size: 14px;
 }
-button {
-    padding: 8px 16px;
+
+button{
+    border-radius: 12px;
+    border: none;
+    padding: 12px 32px;
+    background-color: #22b393;
     cursor: pointer;
-    font-size: 14px;
+    transition: all 0.1s ease-in-out;
+    font-family: QueshaGndR,sans-serif;
+    font-size: large;
+}
+
+#share-button{
+    font-size: xx-large;
+}
+
+button:hover{
+    background-color: #97f7df;
+    letter-spacing: 0.1em;
 }
 
 .home-button {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    border-radius: 8px;
+}
+
+body:has(button:hover){
+    background-color: #22b393;
+    transition: all 0.25s ease-in-out;
+
 }
 </style>
 </head>
@@ -61,10 +89,10 @@ button {
     method="POST" style="display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;">
         
         <!-- Note -->
-        <textarea name="entry.1048155509" placeholder="Make a confession..."></textarea>
+        <textarea name="entry.1048155509" placeholder="Write anything to fly with the wind..."></textarea>
         
         <!-- Submit -->
-        <button type="submit">Share</button>
+        <button type="submit" id="share-button">Share</button>
     </form>
 </div>
 
