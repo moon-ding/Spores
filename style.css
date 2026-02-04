@@ -30,7 +30,7 @@ h1{
 .spore{
     width: min(80vw, 80vh);
     height: min(80vw, 80vh);
-    border-radius: 50%;
+    border-radius: 55% 50% 45% 50% / 52% 48% 50% 50%;
     background-color: white;
 
     display: flex;

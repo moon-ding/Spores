@@ -74,10 +74,11 @@ body:has(button:hover){
 /* Spore styling */
 .spore {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 12px;
-    border-radius: 50%;
+    border-radius: 50% 55% 45% 50% / 52% 48% 50% 50%;
     background: white;
     position: absolute;
     text-align: center;
@@ -88,11 +89,13 @@ body:has(button:hover){
     max-width: 220px;  /* maximum size */
     max-height: 220px;
     font-size: 16px;
+    cursor: pointer;
 }
 
 .spore:hover{
     border:2px ridge 	#45797a;
     transition: border 0.1s ease-in-out;
+    z-index: 5;
 }
 
 .spore.liked{
@@ -114,6 +117,26 @@ body:has(button:hover){
     }
 }
 
+/*new stuff*/
+.spore-text {
+    margin-bottom: 8px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spore-likes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #45797a; /* heart-like color */
+}
+
+.resonance-icon {pointer-events: none;}
+
 </style>
 </head>
 <body>
@@ -124,8 +147,6 @@ body:has(button:hover){
     <div class="button-row">
         <button id="refresh-button" onclick="renderSpores()">Fetch Spores</button></div>
         <a href="index.html"><button id="home-button">Back to Home</button></a></div>
-    </div> 
-
 </div>
 
 <script>
@@ -185,40 +206,68 @@ function renderSpores() {
 
     const placedSpores = [];
 
-    selected.forEach(note => {
-    const spore = document.createElement("div");
-    spore.className = "spore";
-    spore.textContent = note;
+selected.forEach(note => {
+        const spore = document.createElement("div");
+        spore.className = "spore";
 
-    // Approximate width by text length
-    const baseSize = 80;            // min size
-    const extraSize = Math.min(note.length * 6, 140); // scale with text length, capped
-    const sporeSize = baseSize + extraSize;
+        // Text
+        const sporeText = document.createElement("div");
+        sporeText.className = "spore-text";
+        sporeText.textContent = note;
 
-    spore.style.width = spore.style.height = sporeSize + "px";
+        // Likes
+        const sporeLikes = document.createElement("div");
+        sporeLikes.className = "spore-likes";
 
-    const maxX = notesArea.clientWidth - sporeSize;
-    const maxY = notesArea.clientHeight - sporeSize;
+        const icon = document.createElement("span");
+        icon.className = "resonance-icon";
+        icon.textContent = "⟡";
 
-    let x, y, attempts = 0;
-    do {
-        x = Math.random() * maxX;
-        y = Math.random() * maxY;
-        attempts++;
-        if (attempts > 100) break; // fail-safe
-    } while (isOverlapping({x, y, size: sporeSize}, placedSpores));
+        const count = document.createElement("span");
+        count.className = "like-count";
+        count.textContent = "0";
 
-    spore.style.left = x + "px";
-    spore.style.top  = y + "px";
-    
-    spore.addEventListener("click",function(){
-        spore.classList.add("liked");
+        sporeLikes.appendChild(icon);
+        sporeLikes.appendChild(count);
+
+        spore.appendChild(sporeText);
+        spore.appendChild(sporeLikes);
+
+        // Position & size
+        const baseSize = 80;
+        const extraSize = Math.min(note.length * 6, 140);
+        const sporeSize = baseSize + extraSize;
+        spore.style.width = spore.style.height = sporeSize + "px";
+
+        const maxX = notesArea.clientWidth - sporeSize;
+        const maxY = notesArea.clientHeight - sporeSize;
+
+        let x, y, attempts = 0;
+        do {
+            x = Math.random() * maxX;
+            y = Math.random() * maxY;
+            attempts++;
+            if (attempts > 100) break;
+        } while (isOverlapping({x, y, size: sporeSize}, placedSpores));
+
+        spore.style.left = x + "px";
+        spore.style.top = y + "px";
+
+        // CLICK event for icon
+        spore.addEventListener("click", () => {
+            count.textContent = parseInt(count.textContent) + 1;
+
+            // Flash animation
+            spore.classList.remove("liked");
+            void spore.offsetWidth; // force reflow
+            spore.classList.add("liked");
+        });
+
+        notesArea.appendChild(spore);
+        placedSpores.push({x, y, size: sporeSize});
     });
-
-    notesArea.appendChild(spore);
-    placedSpores.push({x, y, size: sporeSize});
-});
 }
+
 
 // Initial load
 loadNotes().then(renderSpores);
